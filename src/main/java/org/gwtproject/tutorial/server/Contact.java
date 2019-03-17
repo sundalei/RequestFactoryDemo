@@ -1,6 +1,5 @@
 package org.gwtproject.tutorial.server;
 
-import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -17,6 +16,14 @@ public class Contact {
 	private List<Phone> phones;
 	
 	private String notes;
+	
+	public Contact () {
+		
+	}
+	
+	public static Contact findContact (Long id) {
+		return CEM.fetch(id);
+	}
 
 	public Long getId() {
 		return id;
@@ -67,23 +74,23 @@ public class Contact {
 	}
 	
 	public static Integer count() {
-		return 4;
+		return CEM.list().size();
 	}
 	
 	public static Contact find(Long id) {
-		return null;
+		return CEM.fetch(id);
 	}
 	
 	public static List<Contact> findAllContacts() {
-		return null;
+		return CEM.list();
 	}
 	
 	public void persist() {
-		
+		CEM.persist(this);
 	}
 	
 	public void remove() {
-		
+		CEM.delete(this.getId());
 	}
 	
 	public static class Phone {
