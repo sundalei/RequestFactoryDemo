@@ -11,9 +11,19 @@
     <servlet-class>org.gwtproject.tutorial.server.GreetingServiceImpl</servlet-class>
   </servlet>
   
+  <servlet>
+  <servlet-name>requestFactoryServlet</servlet-name>
+  <servlet-class>com.google.web.bindery.requestfactory.server.RequestFactoryServlet</servlet-class>
+  </servlet>
+  
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
     <url-pattern>/requestfactorydemo/greet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  <servlet-name>requestFactoryServlet</servlet-name>
+  <url-pattern>/gwtRequest</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->
