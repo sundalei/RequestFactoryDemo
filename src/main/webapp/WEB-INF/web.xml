@@ -7,6 +7,12 @@
 
   <!-- Servlets -->
   <servlet>
+		<servlet-name>init</servlet-name>
+		<servlet-class>org.gwtproject.tutorial.server.BootstrapValidationServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+  <servlet>
     <servlet-name>greetServlet</servlet-name>
     <servlet-class>org.gwtproject.tutorial.server.GreetingServiceImpl</servlet-class>
   </servlet>
