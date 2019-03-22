@@ -16,5 +16,8 @@
 			<g:Button ui:field="btnUpdate" text="Update" />
 			<g:Button ui:field="btnDelete" text="Delete" />
 		</g:HorizontalPanel>
+		<g:VerticalPanel>
+		    <g:TextArea ui:field="txtArea" />
+		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

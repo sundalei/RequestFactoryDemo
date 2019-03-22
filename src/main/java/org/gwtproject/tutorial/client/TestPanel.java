@@ -2,12 +2,18 @@ package org.gwtproject.tutorial.client;
 
 import java.util.logging.Logger;
 
+import org.gwtproject.tutorial.client.ContactProxy.PhoneProxy;
+import org.gwtproject.tutorial.client.Factory.ContactRequest;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 
@@ -20,6 +26,12 @@ public class TestPanel extends Composite {
 	
 	Logger log = Logger.getLogger("");
 	Factory factory;
+	
+	@UiField
+	TextArea txtArea;
+	
+	@UiField
+	TextBox txtInput;
 
 	public TestPanel() {
 		factory = GWT.create(Factory.class);
@@ -28,14 +40,34 @@ public class TestPanel extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 	
+	@UiHandler("btnPersist")
+	public void persist(ClickEvent event) {
+		ContactRequest context = factory.createContactRequest();
+		String rand = genRandomString();
+		
+		PhoneProxy phone = context.create(PhoneProxy.class);
+		phone.setType("Home");
+		phone.setNumber("555-" + rand);
+		
+		
+		
+	}
+	
+	private String genRandomString() {
+		return Integer.toString((int) (Math.random() * 99999));
+	}
+
 	@UiHandler("btnCount")
 	public void count (ClickEvent event) {
 		Receiver<Integer> rec = new Receiver<Integer>() {
 
 			@Override
 			public void onSuccess(Integer count) {
-				GWT.log(count.toString());
-				log.info(count.toString());
+				String message = txtArea.getText();
+				if(message != null && !"".equals(message)) {
+					message += "\r\n";
+				}
+				txtArea.setText(message + count.toString());
 			}
 			
 		};
