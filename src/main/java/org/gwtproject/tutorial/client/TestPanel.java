@@ -1,5 +1,6 @@
 package org.gwtproject.tutorial.client;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.gwtproject.tutorial.client.ContactProxy.PhoneProxy;
@@ -49,7 +50,13 @@ public class TestPanel extends Composite {
 		phone.setType("Home");
 		phone.setNumber("555-" + rand);
 		
+		ContactProxy contact = context.create(ContactProxy.class);
+		contact.setEmail(rand + "@example.com");
+		contact.setName(rand);
+		contact.setPhones(Arrays.asList(phone));
+		contact.setNotes("Random notes for " + rand);
 		
+		context.persist().using(contact).fire();
 		
 	}
 	
@@ -67,7 +74,7 @@ public class TestPanel extends Composite {
 				if(message != null && !"".equals(message)) {
 					message += "\r\n";
 				}
-				txtArea.setText(message + count.toString());
+				txtArea.setText(message + "total account number: " + count.toString());
 			}
 			
 		};
