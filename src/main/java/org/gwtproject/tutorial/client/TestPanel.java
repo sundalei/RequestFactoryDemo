@@ -1,6 +1,7 @@
 package org.gwtproject.tutorial.client;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.gwtproject.tutorial.client.ContactProxy.PhoneProxy;
@@ -12,11 +13,13 @@ import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 public class TestPanel extends Composite {
 
@@ -80,6 +83,60 @@ public class TestPanel extends Composite {
 		};
 		
 		factory.createContactRequest().count().fire(rec);
+	}
+	
+	@UiHandler("btnList")
+	public void list(ClickEvent event) {
+		Receiver<List<ContactProxy>> rec = new Receiver<List<ContactProxy>> () {
+
+			@Override
+			public void onSuccess(List<ContactProxy> response) {
+				for(ContactProxy c : response) {
+					String message = txtArea.getText();
+					if(message != null && !"".equals(message)) {
+						message += "\r\n";
+					}
+					txtArea.setText(message + "Contact: " + c.getId() + "=" + c.getEmail());
+				}
+			}
+			
+			@Override
+			public void onFailure(ServerFailure error) {
+				Window.alert(error.getMessage());
+			}
+			
+		};
+		
+		factory.createContactRequest().findAllContacts().fire(rec);
+	}
+	
+	@UiHandler("btnFetch")
+	public void fetch(ClickEvent event) {
+		Receiver<ContactProxy> rec = new Receiver<ContactProxy>() {
+
+			@Override
+			public void onSuccess(ContactProxy contact) {
+				String message = txtArea.getText();
+				if(message != null && !"".equals(message)) {
+					message += "\r\n";
+				}
+				
+				StringBuilder builder = new StringBuilder();
+				builder.append("id: " + contact.getId()).append(" ");
+				builder.append("name: " + contact.getName()).append(" ");
+				builder.append("email: " + contact.getEmail()).append(" ");
+				if (contact.getPhones() != null) {
+					for (PhoneProxy p : contact.getPhones())
+						builder.append("phone: " + p.getType() + "/" + p.getNumber()).append(" ");
+				} else {
+					builder.append("phone: null").append(" ");
+				}
+				builder.append("notes: " + contact.getNotes());
+				txtArea.setText(message + builder.toString());
+			}
+		};
+
+		factory.createContactRequest().find(((Long) Long.parseLong(txtInput.getText()))).with("phones").fire(rec);
 	}
 
 }
