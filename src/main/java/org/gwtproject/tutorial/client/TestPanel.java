@@ -1,6 +1,7 @@
 package org.gwtproject.tutorial.client;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -65,6 +66,10 @@ public class TestPanel extends Composite {
 	
 	private String genRandomString() {
 		return Integer.toString((int) (Math.random() * 99999));
+	}
+	
+	private Long txtInputAsLong() {
+		return Long.parseLong(txtInput.getText());
 	}
 
 	@UiHandler("btnCount")
@@ -137,6 +142,35 @@ public class TestPanel extends Composite {
 		};
 
 		factory.createContactRequest().find(((Long) Long.parseLong(txtInput.getText()))).with("phones").fire(rec);
+	}
+	
+	@UiHandler("btnUpdate")
+	public void update(ClickEvent event) {
+		Receiver<ContactProxy> rec = new Receiver<ContactProxy> () {
+			@Override
+			public void onSuccess(ContactProxy contact) {
+				ContactRequest ctx = factory.createContactRequest();
+				ContactProxy editableContact = ctx.edit(contact);
+				editableContact.setNotes("Late updated " + new Date());
+				ctx.persist().using(editableContact).fire();
+			}
+		};
+		
+		factory.createContactRequest().find(txtInputAsLong()).fire(rec);
+	}
+	
+	@UiHandler("btnDelete")
+	public void delete(ClickEvent event) {
+		Receiver<ContactProxy> rec = new Receiver<ContactProxy> () {
+			@Override
+			public void onSuccess(ContactProxy contact) {
+				ContactRequest ctx = factory.createContactRequest();
+				ContactProxy editableContact = ctx.edit(contact);
+				ctx.remove().using(editableContact).fire();
+			}
+		};
+		
+		factory.createContactRequest().find(txtInputAsLong()).fire(rec);
 	}
 
 }
