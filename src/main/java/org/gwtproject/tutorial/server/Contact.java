@@ -3,18 +3,24 @@ package org.gwtproject.tutorial.server;
 
 import java.util.List;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class Contact {
 	
 	private Long id;
 	
 	private Integer version;
 	
+	@Size(min = 2, max = 20)
 	private String name;
 	
+	@Pattern(regexp = "[^@\\s]+@[^@\\s]+", message = "email address is not valid")
 	private String email;
 	
 	private List<Phone> phones;
 	
+	@Size(max = 100)
 	private String notes;
 	
 	public Contact () {

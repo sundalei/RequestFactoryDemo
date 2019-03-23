@@ -172,5 +172,22 @@ public class TestPanel extends Composite {
 		
 		factory.createContactRequest().find(txtInputAsLong()).fire(rec);
 	}
+	
+	@UiHandler("btnDeleteAll")
+	public void deleteAll(ClickEvent event) {
+		Receiver<List<ContactProxy>> rec = new Receiver<List<ContactProxy>>() {
+			
+			@Override
+			public void onSuccess(List<ContactProxy> response) {
+				ContactRequest ctx = factory.createContactRequest();
+				for(ContactProxy contact : response) {
+					ctx.remove().using(ctx.edit(contact));
+				}
+				ctx.fire();
+			}
+		};
+		
+		factory.createContactRequest().findAllContacts().fire(rec);
+	}
 
 }
