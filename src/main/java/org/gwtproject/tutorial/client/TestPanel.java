@@ -3,7 +3,10 @@ package org.gwtproject.tutorial.client;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
+
+import javax.validation.ConstraintViolation;
 
 import org.gwtproject.tutorial.client.ContactProxy.PhoneProxy;
 import org.gwtproject.tutorial.client.Factory.ContactRequest;
@@ -188,6 +191,56 @@ public class TestPanel extends Composite {
 		};
 		
 		factory.createContactRequest().findAllContacts().fire(rec);
+	}
+	
+	@UiHandler("btnPersistInvalid")
+	public void persistInvalid(ClickEvent event) {
+		ContactRequest context = factory.createContactRequest();
+		
+		ContactProxy contact = context.create(ContactProxy.class);
+		
+		contact.setEmail("invalid email");
+		contact.setName("");
+		
+		String notes = "";
+		for(int i = 0; i < 20; i++) {
+			notes += "too-long";
+		}
+		contact.setNotes(notes);
+		
+		Receiver<Void> receiver = new Receiver<Void>() {
+			
+			@Override
+			public void onSuccess(Void response) {
+				String message = txtArea.getText();
+				if(message != null && !"".equals(message)) {
+					message += "\r\n";
+				}
+				txtArea.setText(message + "We passed validation");
+			}
+			
+			@Override
+			public void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
+				for(ConstraintViolation<?> err : violations) {
+					String message = txtArea.getText();
+					if(message != null && !"".equals(message)) {
+						message += "\r\n";
+					}
+					txtArea.setText(message + err.getPropertyPath() + " : " + err.getMessage());
+				}
+			}
+			
+			@Override
+			public void onFailure(ServerFailure error) {
+				String message = txtArea.getText();
+				if(message != null && !"".equals(message)) {
+					message += "\r\n";
+				}
+				txtArea.setText(message + "Server failure: " + error.getMessage());
+			}
+		};
+		
+		context.persist().using(contact).fire(receiver);
 	}
 
 }
